@@ -104,3 +104,23 @@ $ git reset --hard HEAD
 ```
 
 참조 : https://gmlwjd9405.github.io/2018/05/25/git-add-cancle.html
+
+
+
+---
+
+Window에서 git 사용하기
+==
+
+[참조링크](https://cofs.tistory.com/421)
+
+
+
+1. https://desktop.github.com/ 에서 GitHub Desktop을  설치한다.
+2. 다운받은 파일 `GitHubDesktopSetup.exe` 을 실행한다.
+3. 설명해주는대로 진행한다.
+4. 설치된 GitHub Desktop 바로가기에서 우클릭을 사용하여 파일위치 열기를 실행한다.
+5. `\app-x.x.x\resources\app\git\cmd` 로 이동을 하면 git.exe파일이 있다.
+6. 해당 파일의 송성정보에서 경로를 복사한다.
+7. 내 pc(내컴퓨터) 우클릭 > 속성 > 고급 시스템 설정 > 고급 탭 > 환경변수 > 시스템 변수의 path 항목에 복사한 경로 추가
+8. 등록후 cmd 창에서 git --version 명령어를 테스트해본다.
