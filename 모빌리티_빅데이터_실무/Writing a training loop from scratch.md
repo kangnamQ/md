@@ -220,7 +220,8 @@ You can readily reuse the built-in metrics (or custom ones you wrote) in such tr
   - 매트릭의 상태를 초기화해야할 때 `metric.reset_states()`를 호출한다. (일반적으로 에폭 종료시)
 
 Let's use this knowledge to compute `SparseCategoricalAccuracy` on validation data at the end of each epoch:
-
+이 기술을 사용해서 각 에폭이 끝날때 검증 데이터에 대한 `SparseCategoricalAccuracy`를 계산할 수 있습니다.
+`SparseCategoricalAccuracy` : 희박한 범주형 정확도
 
 ```python
 # Get model
@@ -231,6 +232,7 @@ outputs = layers.Dense(10, name="predictions")(x)
 model = keras.Model(inputs=inputs, outputs=outputs)
 
 # Instantiate an optimizer to train the model.
+# optimizer을 사용한 훈련모델을 예시로 가지고 온다
 optimizer = keras.optimizers.SGD(learning_rate=1e-3)
 # Instantiate a loss function.
 loss_fn = keras.losses.SparseCategoricalCrossentropy(from_logits=True)
@@ -242,7 +244,7 @@ val_acc_metric = keras.metrics.SparseCategoricalAccuracy()
 
 Here's our training & evaluation loop:
 
-
+트레이닝 & 평가 루프는 다음과 같다.
 
 ```python
 import time
@@ -289,7 +291,7 @@ for epoch in range(epochs):
     print("Time taken: %.2fs" % (time.time() - start_time))
 ```
 
-실한한 결과는 다음과 같다.
+실행한 결과는 다음과 같다.
 
 ```python
 Start of epoch 0
