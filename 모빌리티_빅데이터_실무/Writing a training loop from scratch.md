@@ -330,10 +330,21 @@ Time taken: 5.46s
 ## [tf.function](https://www.tensorflow.org/api_docs/python/tf/function)
 
 The default runtime in TensorFlow 2.0 is [eager execution](https://www.tensorflow.org/guide/eager). As such, our training loop above executes eagerly.
+TensorFlow 2.0의 기본 런타임은 즉시 실행(열성적인 실행) 입니다. 따라서 위의 교육 루프는 열심히 실행됩니다.
 
-This is great for debugging, but graph compilation has a definite performance advantage. Describing your computation as a static graph enables the framework to apply global performance optimizations. This is impossible when the framework is constrained to greedly execute one operation after another, with no knowledge of what comes next.
+
+
+This is great for debugging, but graph compilation has a definite performance advantage. 
+이것은 디버깅에 적합하지만 그래프 컴파일에는 확실한 성능 이점이 있습니다. 
+
+Describing your computation as a static graph enables the framework to apply global performance optimizations. 
+계산을 정적 그래프로 설명하면 프레임 워크가 전역 성능 최적화를 적용 할 수 있습니다. 
+
+This is impossible when the framework is constrained to greedly execute one operation after another, with no knowledge of what comes next.
+프레임 워크가 다음에 무슨 일이 일어날 지 알지 못한 채 탐욕스럽게 한 작업을 차례로 실행하도록 제한되어있는 경우 불가능합니다.
 
 You can compile into a static graph any function that takes tensors as input. Just add a `@tf.function` decorator on it, like this:
+텐서를 입력으로 사용하는 모든 함수를 정적 그래프로 컴파일 할 수 있습니다. 다음과 같이 `@tf.function` 데코레이터를 추가하면됩니다.
 
 ```python
 @tf.function
@@ -350,6 +361,7 @@ def train_step(x, y):
 
 
 Let's do the same with the evaluation step:
+평가 단계에서도 똑같이합시다.
 
 ```python
 @tf.function
@@ -359,6 +371,7 @@ def test_step(x, y):
 ```
 
 Now, let's re-run our training loop with this compiled training step:
+이제이 컴파일 된 학습 단계를 사용하여 학습 루프를 다시 실행 해 보겠습니다.
 
 ```python
 import time
@@ -437,13 +450,18 @@ Much faster, isn't it?
 
 ## Low-level handling of losses tracked by the model
 
+## 모델에 의해 추적 된 손실의 저수준 처리
+
 
 
 Layers & models recursively track any losses created during the forward pass by layers that call `self.add_loss(value)`. The resulting list of scalar loss values are available via the property `model.losses` at the end of the forward pass.
+레이어 및 모델은 `self.add_loss(value)` 를 호출하는 레이어에 의해 순방향 전달 중에 생성 된 손실을 재귀 적으로 추적합니다. 스칼라 손실 값의 결과 목록은 순방향 패스가 끝날 때 `model.losses` 속성을 통해 사용할 수 있습니다.
 
 If you want to be using these loss components, you should sum them and add them to the main loss in your training step.
+이러한 손실 구성 요소를 사용하려면이를 합산하고 훈련 단계의 주요 손실에 추가해야합니다.
 
 Consider this layer, that creates an activity regularization loss:
+활동 정규화 손실을 생성하는 다음 계층을 고려하십시오.
 
 ```python
 class ActivityRegularizationLayer(layers.Layer):
@@ -453,6 +471,7 @@ class ActivityRegularizationLayer(layers.Layer):
 ```
 
 Let's build a really simple model that uses it:
+그것을 사용하는 정말 간단한 모델을 만들어 봅시다 :
 
 ```python
 inputs = keras.Input(shape=(784,), name="digits")
@@ -466,6 +485,7 @@ model = keras.Model(inputs=inputs, outputs=outputs)
 ```
 
 Here's what our training step should look like now:
+이제 훈련 단계는 다음과 같습니다.
 
 ```python
 @tf.function
@@ -485,29 +505,70 @@ def train_step(x, y):
 
 
 
-## Summary
+## Summary (요약)
 
 Now you know everything there is to know about using built-in training loops and writing your own from scratch.
+이제 기본 제공 교육 루프를 사용하고 처음부터 직접 작성하는 방법에 대해 알아야 할 모든 것을 알았습니다.
 
 To conclude, here's a simple end-to-end example that ties together everything you've learned in this guide: a DCGAN trained on MNIST digits.
+결론을 내리기 위해이 가이드에서 배운 모든 내용을 연결하는 간단한 종단 간 예가 있습니다. MNIST 숫자로 훈련 된 DCGAN입니다.
 
 ---
 
+
+
 ## End-to-end example: a GAN training loop from scratch
 
-You may be familiar with Generative Adversarial Networks (GANs). GANs can generate new images that look almost real, by learning the latent distribution of a training dataset of images (the "latent space" of the images).
+## 엔드-투-엔드 예제 : 처음부터 GAN 훈련 루프
+
+You may be familiar with Generative Adversarial Networks (GANs). 
+GAN (Generative Adversarial Network)에 익숙 할 수 있습니다. 
+
+GANs can generate new images that look almost real, by learning the latent distribution of a training dataset of images (the "latent space" of the images).
+GAN은 이미지 훈련 데이터 세트 (이미지의 "잠재 공간")의 잠재 분포를 학습하여 거의 실제처럼 보이는 새로운 이미지를 생성 할 수 있습니다.
 
 A GAN is made of two parts: a "generator" model that maps points in the latent space to points in image space, a "discriminator" model, a classifier that can tell the difference between real images (from the training dataset) and fake images (the output of the generator network).
+GAN은 잠복 공간의 점을 이미지 공간의 점으로 매핑하는 "생성자"모델, "분별 자"모델, 실제 이미지 (학습 데이터 세트의)와 가짜 이미지의 차이를 구분할 수있는 분류기의 두 부분으로 구성됩니다.  (생성기 네트워크의 출력).
+
+
 
 A GAN training loop looks like this:
+GAN 교육 루프는 다음과 같습니다.
 
-1) Train the discriminator. - Sample a batch of random points in the latent space. - Turn the points into fake images via the "generator" model. - Get a batch of real images and combine them with the generated images. - Train the "discriminator" model to classify generated vs. real images.
+1) Train the discriminator. 
+판별자를 훈련하십시오. 
 
-2) Train the generator. - Sample random points in the latent space. - Turn the points into fake images via the "generator" network. - Get a batch of real images and combine them with the generated images. - Train the "generator" model to "fool" the discriminator and classify the fake images as real.
+- Sample a batch of random points in the latent space. 
+ - 잠재 공간에서 임의의 지점을 샘플링합니다. 
+
+- Turn the points into fake images via the "generator" model. 
+  -  "생성기"모델을 통해 포인트를 가짜 이미지로 전환합니다.
+- Get a batch of real images and combine them with the generated images. 
+  - 실제 이미지의 배치를 가져와 생성 된 이미지와 결합합니다.
+-  Train the "discriminator" model to classify generated vs. real images.
+  - 생성 된 이미지와 실제 이미지를 분류하기 위해 "분별 자"모델을 훈련시킵니다.
+
+
+
+2) Train the generator. 
+발전기를 훈련 시키십시오.
+
+- Sample random points in the latent space.
+  - 잠재 공간에서 무작위 포인트를 샘플링합니다.
+- Turn the points into fake images via the "generator" network. 
+  -  "생성기"네트워크를 통해 포인트를 가짜 이미지로 전환합니다.
+- Get a batch of real images and combine them with the generated images. 
+  - 실제 이미지의 배치를 가져와 생성 된 이미지와 결합합니다.
+- Train the "generator" model to "fool" the discriminator and classify the fake images as real.
+  -  "generator"모델을 훈련시켜 판별자를 "속이고"가짜 이미지를 실제 이미지로 분류합니다.
+
+
 
 For a much more detailed overview of how GANs works, see [Deep Learning with Python](https://www.manning.com/books/deep-learning-with-python).
+GAN의 작동 방식에 대한 훨씬 더 자세한 개요는 [Python을 사용한 Deep Learning 항목을](https://www.manning.com/books/deep-learning-with-python) 참조하십시오.
 
 Let's implement this training loop. First, create the discriminator meant to classify fake vs real digits:
+이 훈련 루프를 구현해 봅시다. 먼저 가짜와 실수를 구분하기위한 판별자를 만듭니다.
 
 ```python
 discriminator = keras.Sequential(
@@ -553,6 +614,7 @@ _________________________________________________________________
 
 
 Then let's create a generator network, that turns latent vectors into outputs of shape `(28, 28, 1)` (representing MNIST digits):
+그런 다음 잠재 벡터를 형태 `(28, 28, 1)` (MNIST 숫자를 나타냄 `(28, 28, 1)` 출력으로 변환하는 생성기 네트워크를 만들어 보겠습니다.
 
 ```python
 latent_dim = 128
@@ -575,6 +637,7 @@ generator = keras.Sequential(
 ```
 
 Here's the key bit: the training loop. As you can see it is quite straightforward. The training step function only takes 17 lines.
+핵심 부분은 훈련 루프입니다. 보시다시피 매우 간단합니다. 훈련 단계 기능은 17 줄만 사용합니다.
 
 ```python
 # Instantiate one optimizer for the discriminator and another for the generator.
@@ -624,8 +687,10 @@ def train_step(real_images):
 ```
 
 Let's train our GAN, by repeatedly calling `train_step` on batches of images.
+이미지 배치에 대해 `train_step` 을 반복적으로 호출하여 GAN을 훈련시켜 봅시다.
 
 Since our discriminator and generator are convnets, you're going to want to run this code on a GPU.
+우리의 판별 자와 생성기는 convnet이기 때문에이 코드를 GPU에서 실행하고 싶을 것입니다.
 
 ```python
 import os
@@ -676,3 +741,4 @@ adversarial loss at step 0: 0.67
 ```
 
 That's it! You'll get nice-looking fake MNIST digits after just ~30s of training on the Colab GPU.
+그게 다야! Colab GPU에서 30 초 정도 훈련 한 후에 멋진 가짜 MNIST 숫자를 얻을 수 있습니다.
