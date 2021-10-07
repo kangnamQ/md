@@ -1,25 +1,3 @@
-모빌리티 빅데이터 실무
-===
-
-세부정보
----
-
-- 담당 : 최혁두 교수님
-- 일시 : 화  14:00 ~ 17:00
-- 주 사용 플랫폼 : Flow
-- 주차 : Setting -
-
----
-
-참조
----
-
-Reference : [IanLecture][IanLecture_link] (교수님 블로그)
-
-[IanLecture_link]: https://goodgodgd.github.io/ian-lecture/archivers/dt-install-all "IanLecture_Reference"
-
----
-
 Ubuntu Setting
 ===
 
@@ -33,6 +11,7 @@ Ubuntu Setting
   
 
 - NVIDIA driver: `sudo ubuntu-drivers autoinstall`
+
   - ubuntu-drivers devices 
     - 현재 그래픽 카드에 적합한 드라이버를 보여준다.
   - nvidia-smi
@@ -75,6 +54,7 @@ or
 $ chmod a+x cuda_<version>.run
 $ sudo ./cuda_<version>.run
 
+> 그래픽부분만 체크해제하고 시작하면 된다.
 ---
 
 $ wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-ubuntu1804.pin
@@ -93,6 +73,21 @@ $ sudo apt-get -y install cuda
 
 run파일로 실행에서 deb 파일 설치하여 local에 cuda폴더를 만들기로 함.
 
+
+
+
+
+``` python
+$ sudo sh -c "echo 'export PATH=$PATH:/usr/local/cuda-11.2/bin' >> /etc/profile"
+$ sudo sh -c "echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-11.2/lib64' >> /etc/profile"
+$ sudo sh -c "echo 'export CUDADIR=/usr/local/cuda-11.2' >> /etc/profile"
+$ source /etc/profile
+
+nvcc -V
+```
+
+
+
 ---
 
 - cuDNN: https://developer.nvidia.com/rdp/cudnn-archive
@@ -109,6 +104,8 @@ sudo cp <extracted directory>/cuda/lib64/* /usr/local/cuda/lib64
 
 sudo cp cuda/include/* /usr/local/cuda/include
 sudo cp cuda/lib64/* /usr/local/cuda/lib64
+
+$ sudo chmod a+r /usr/local/cuda/include/cudnn.h /usr/local/cuda/lib64/libcudnn*
 ```
 
 ​	
@@ -118,6 +115,31 @@ sudo cp cuda/lib64/* /usr/local/cuda/lib64
 ```
 export LD_LIBARARY_PATH="/usr/local/cuda/lib64:${LD_LIBARARY_PATH}"
 export PATH="/usr/local/cuda/bin:${PATH}"
+```
+
+
+
+```python
+$ sudo ln -sf /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_adv_train.so.8.1.0 /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_adv_train.so.8
+$ sudo ln -sf /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_infer.so.8.1.0  /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_infer.so.8
+$ sudo ln -sf /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_cnn_train.so.8.1.0  /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_cnn_train.so.8
+$ sudo ln -sf /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_adv_infer.so.8.1.0  /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_adv_infer.so.8
+$ sudo ln -sf /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_train.so.8.1.0  /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_train.so.8
+$ sudo ln -sf /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_cnn_infer.so.8.1.0 /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_cnn_infer.so.8
+$ sudo ln -sf /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn.so.8.1.0  /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn.so.8
+
+ldconfig -N -v $(sed 's/:/ /' <<< $LD_LIBRARY_PATH) 2>/dev/null | grep libcudnn
+
+
+```
+
+
+
+
+
+```
+sudo ln -s /usr/local/cuda/lib64/libcusolver.so.11 ~/.pyenv/versions/py388ver/lib/python3.8/site-packages/tensorflow/python/libcusolver.so.10
+
 ```
 
 
@@ -136,6 +158,8 @@ export PATH="/usr/local/cuda/bin:${PATH}"
     xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
     ```
 
+    이거 꼭해라..
+
 
 
 
@@ -153,9 +177,25 @@ export PATH="/usr/local/cuda/bin:${PATH}"
 
 ---
 
+  PyCharm: `sudo snap install pycharm-community --classic`
+
+- ``` python
+  # Ctrl+Alt+T 로 터미널 열기
+  # 압축을 풀어 /opt 경로에 놓기
+  sudo tar -xf /home/pi/Downloads/pycharm-community-2020.2.1.tar.gz -C /opt
+  # 사용사 설정 파일 열기
+  mousepad ~/.bashrc
+  # 파이참 실행 명령어 등록 위해 맨 아래 줄에 한 줄 추가
+  alias pycharm="/opt/pycharm-community-2020.2.1/bin/pycharm.sh"
+  # Ctrl+S 눌러 저장후 오른쪽 위 'x' 눌러 닫기
+  
+  # 터미널에서 파이참 실행
+  pycharm
+  ```
+
   
 
-- PyCharm: `sudo snap install pycharm-community --classic`
+---
 
 - 한글 설치
   - Settings -> Region & Language -> Add “Korean(101/104 key compatible)” -> Manage Installed Languages -> Update
@@ -163,7 +203,6 @@ export PATH="/usr/local/cuda/bin:${PATH}"
   - Settings -> Region & Language -> Manage Installed Languages -> Keyboard input method system: “fcitx”
   - 재부팅
   - 한/영키 등록: 오른쪽 위 키보드 아이콘 -> Configure -> “+” -> “Hangul” 추가 -> Global Config 탭 -> Trigger Input Method
-  
 - Naver Whale: https://whale.naver.com/ko/download
 
 ---
@@ -240,11 +279,20 @@ Output : tf.Tensor([4.5362177 5.611371], shape=(2,), dtype=float32)
 
 `pyenv install --list | grep 3.8` 3.8버전 리스트만 보여준다.
 
+ tf.config.list_physical_devices('GPU')
+
+///https://webnautes.tistory.com/1428
 
 
-///
 
----
 
-https://webnautes.tistory.com/1428
 
+++
+
+460 - 11.2 / 8.1 / tensor 2.5 사용하기
+
+450 - 11.0 / 8.0 / tensor 2.4 
+
+
+
+cuda 랑 tensorflow랑 버전 안맞으면 에러나고 gpu 할당 안됨...
