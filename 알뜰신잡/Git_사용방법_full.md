@@ -96,6 +96,11 @@ $ git remote add origin <.git 주소>
 $ git remote -v
 	원격 저장소 목록 
 
+	## 이미 사용하고 있는 폴더로 지정하고 싶다면 remote로 설정해주어도 괜찮지만
+	$ git clone <저장소 주소> [로컬 저장소 디렉토리 이름]
+	이후 .git 파일과 안에있는 파일을 사용하고 있는 폴더로 옮기면 자동으로 저장소가 지정되며 에러도 발생하지
+	않아 더 편리한듯 하다.
+
 $ git config user.name "<name>"
 $ git config user.email "<email>"
 
@@ -122,6 +127,10 @@ $ git pull origin master
    --
 
    ```
+   gedit .gitignore
+   만들고 쓰면 됨
+   
+   
    ## 파일 무시 test.txt 
    ## 다음과 같은 확장자는 전체 무시 *.text *.exe *.zip 
    ## 폴더 무시 test/
@@ -150,11 +159,11 @@ $ git pull origin master
    
    수정사항 무시 파일 조회는 다음 명령어를 사용합니다.
    $ git ls-files -v|grep '^h'
-   
+
    
    출처: https://kcmschool.com/194 [web sprit]
    ```
-
+   
    
 
 ---
@@ -745,3 +754,17 @@ Date:   Mon Feb 3 14:52:36 2014 +0400
 
 
 참고 : http://minsone.github.io/git/git-addtion-and-modified-delete-tag
+
+---
+
+Git 토큰 활성화 
+
+1. git 홈페이지 로그인
+2. setting
+3. developer settings
+4. personal access tokens
+5. 
+
+
+
+참고 : https://velog.io/@jakezo/GitHub-%ED%86%A0%ED%81%B0-%EC%9D%B8%EC%A6%9D-%EB%A1%9C%EA%B7%B8%EC%9D%B8-Personal-Access-Token-%EC%83%9D%EC%84%B1-%EB%B0%8F-%EC%82%AC%EC%9A%A9-%EB%B0%A9%EB%B2%95
